@@ -49,6 +49,8 @@ import Web.Fetch.RequestCredentials (RequestCredentials)
 import Web.Fetch.RequestCredentials as RequestCredentials
 import Web.Fetch.RequestMode (RequestMode)
 import Web.Fetch.RequestMode as RequestMode
+import Web.Fetch.RequestRedirect (RequestRedirect)
+import Web.Fetch.RequestRedirect as RequestRedirect
 
 foreign import data Request :: Type
 
@@ -61,6 +63,7 @@ type UnsafeRequestOptions =
   , credentials :: String
   , cache :: String
   , mode :: String
+  , redirect :: String
   , referrer :: Nullable String
   , referrerPolicy :: String
   , integrity :: String
@@ -73,6 +76,7 @@ type RequestOptions =
   , credentials :: RequestCredentials
   , cache :: RequestCache
   , mode :: RequestMode
+  , redirect :: RequestRedirect
   , referrer :: Maybe Referrer
   , referrerPolicy :: ReferrerPolicy
   , integrity :: Integrity
@@ -87,6 +91,7 @@ defaultOptions =
   , cache: RequestCache.Default
   , mode: RequestMode.Cors
   , referrer: Nothing
+  , redirect: RequestRedirect.Follow
   , referrerPolicy: ReferrerPolicy.NoReferrer
   , integrity: Integrity ""
   }
@@ -102,6 +107,7 @@ toUnsafeOptions opts =
   , credentials: RequestCredentials.toString opts.credentials
   , cache: RequestCache.toString opts.cache
   , mode: RequestMode.toString opts.mode
+  , redirect: RequestRedirect.toString opts.redirect
   , referrer: toNullable $ Referrer.toString <$> opts.referrer
   , referrerPolicy: ReferrerPolicy.toString opts.referrerPolicy
   , integrity: un Integrity opts.integrity
@@ -179,6 +185,9 @@ instance convertCache :: ConvertOption "cache" RequestCache RequestCache where
   convertOption _ = identity
 
 instance convertMode :: ConvertOption "mode" RequestMode RequestMode where
+  convertOption _ = identity
+
+instance convertRedirect :: ConvertOption "redirect" RequestRedirect RequestRedirect where
   convertOption _ = identity
 
 instance convertReferrer :: ConvertOption "referrer" Referrer (Maybe Referrer) where
